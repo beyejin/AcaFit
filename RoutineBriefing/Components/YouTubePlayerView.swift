@@ -62,8 +62,12 @@ extension YouTubePlayerView {
             decidePolicyFor navigationAction: WKNavigationAction,
             decisionHandler: @escaping (WKNavigationActionPolicy) -> Void
         ) {
-            let isMainFrame = navigationAction.targetFrame?.isMainFrame ?? false
-            guard isMainFrame, let url = navigationAction.request.url else {
+            guard navigationAction.targetFrame?.isMainFrame == true else {
+                decisionHandler(.allow)
+                return
+            }
+
+            guard let url = navigationAction.request.url else {
                 decisionHandler(.allow)
                 return
             }
@@ -73,50 +77,56 @@ extension YouTubePlayerView {
                 return
             }
 
+            if let host = url.host?.lowercased(),
+               host.contains("youtube") || host.contains("youtube-nocookie.com") || host.contains("youtu.be") || host.contains("ytimg.com") || host.contains("googlevideo.com") || host.contains("gstatic.com") {
+                decisionHandler(.allow)
+                return
+            }
+
             decisionHandler(.cancel)
         }
     }
 
-    func loadPlayer(in webView: WKWebView, coordinator: Coordinator) {
-        coordinator.videoID = videoID
-        webView.loadHTMLString(playerHTML, baseURL: URL(string: "https://www.youtube.com"))
-    }
-
-    var playerHTML: String {
-        """
+    static func embedHTML(videoID: String) -> String {
+        let embedOrigin = "https://www.youtube-nocookie.com"
+        let embedURLString = "\(embedOrigin)/embed/\(videoID)?playsinline=1&rel=0&modestbranding=1&iv_load_policy=3&enablejsapi=1&origin=\(embedOrigin)"
+        return """
         <!doctype html>
         <html>
         <head>
-            <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <meta name="referrer" content="strict-origin-when-cross-origin">
             <style>
                 html, body {
                     margin: 0;
-                    padding: 0;
                     width: 100%;
                     height: 100%;
-                    background: #000;
                     overflow: hidden;
+                    background: #000;
                 }
-
                 iframe {
-                    position: fixed;
-                    inset: 0;
                     width: 100%;
                     height: 100%;
                     border: 0;
-                    background: #000;
                 }
             </style>
         </head>
         <body>
             <iframe
-                src="https://www.youtube.com/embed/\(videoID)?playsinline=1&rel=0&modestbranding=1&iv_load_policy=3"
+                src="\(embedURLString)"
                 title="YouTube video player"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                allowfullscreen>
+                allowfullscreen
+                referrerpolicy="strict-origin-when-cross-origin">
             </iframe>
         </body>
         </html>
         """
+    }
+
+    func loadPlayer(in webView: WKWebView, coordinator: Coordinator) {
+        coordinator.videoID = videoID
+        let html = Self.embedHTML(videoID: videoID)
+        webView.loadHTMLString(html, baseURL: URL(string: "https://www.youtube-nocookie.com"))
     }
 }

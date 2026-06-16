@@ -86,6 +86,7 @@ struct ExerciseVideoEditorView: View {
         ExerciseVideo(
             id: video.id,
             youtubeID: video.youtubeID,
+            localFileName: video.localFileName,
             title: title.trimmed,
             category: category,
             folderPath: tags(from: folderText, fallback: ["미분류"]),
@@ -93,7 +94,8 @@ struct ExerciseVideoEditorView: View {
             equipment: tags(from: equipmentText, fallback: ["맨몸"]),
             goals: tags(from: goalText, fallback: ["루틴"]),
             durationMinutes: durationMinutes,
-            intensity: intensity
+            intensity: intensity,
+            memo: video.memo
         )
     }
 

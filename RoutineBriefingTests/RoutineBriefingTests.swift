@@ -52,4 +52,59 @@ struct RoutineBriefingTests {
         #expect(video.goals.contains("쿨다운"))
     }
 
+    @Test func customRoutineKeepsDefaultWeekdayScheduleWhenDecodedFromOldStorage() throws {
+        let id = UUID()
+        let json = """
+        [{"id":"\(id.uuidString)","name":"아침 루틴","videoIDs":[]}]
+        """
+
+        let routine = try #require(CustomRoutine.decode(from: json).first)
+
+        #expect(routine.startMinutes == 420)
+        #expect(routine.weekdays == [.monday, .tuesday, .wednesday, .thursday, .friday])
+        #expect(routine.scheduleSummary == "07:00 · 월, 화, 수, 목, 금")
+    }
+
+    @Test func customRoutineEncodesSchedule() throws {
+        let routine = CustomRoutine(
+            name: "저녁 루틴",
+            videoIDs: [],
+            startMinutes: 1260,
+            weekdays: [.monday, .wednesday, .friday]
+        )
+
+        let decoded = try #require(CustomRoutine.decode(from: CustomRoutine.encode([routine])).first)
+
+        #expect(decoded.startMinutes == 1260)
+        #expect(decoded.weekdays == [.monday, .wednesday, .friday])
+        #expect(decoded.scheduleSummary == "21:00 · 월, 수, 금")
+    }
+
+    @Test func oldAllVideosRoutineSelectionFallsBackToAutomaticRecommendation() throws {
+        #expect(RoutineSelection.fromStorage("all") == .automatic)
+        #expect(RoutineSelection.automatic.storageString == "auto")
+    }
+
+    @Test func createsLocalMP4ExerciseVideo() throws {
+        let video = ExerciseVideo.makeFromLocalFile(
+            fileName: "local-video.mp4",
+            originalTitle: "아침 스트레칭",
+            defaultCategory: .stretching
+        )
+
+        #expect(video.isLocalVideo)
+        #expect(video.localFileName == "local-video.mp4")
+        #expect(video.youtubeID.hasPrefix("local:"))
+        #expect(video.title == "아침 스트레칭")
+        #expect(video.category == .stretching)
+    }
+
+    @Test func youtubeEmbedHTMLIncludesReferrerPolicyAndOrigin() throws {
+        let html = YouTubePlayerView.embedHTML(videoID: "abc123")
+
+        #expect(html.contains("referrerpolicy=\"strict-origin-when-cross-origin\""))
+        #expect(html.contains("origin=https://www.youtube-nocookie.com"))
+        #expect(html.contains("https://www.youtube-nocookie.com/embed/abc123"))
+    }
+
 }

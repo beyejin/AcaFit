@@ -90,6 +90,7 @@ enum ExerciseIntensity: String, CaseIterable, Codable, Identifiable {
 struct ExerciseVideo: Identifiable, Codable, Equatable, Hashable {
     let id: UUID
     let youtubeID: String
+    var localFileName: String?
     var title: String
     var category: ExerciseCategory
     var folderPath: [String]
@@ -98,10 +99,12 @@ struct ExerciseVideo: Identifiable, Codable, Equatable, Hashable {
     var goals: [String]
     var durationMinutes: Int
     var intensity: ExerciseIntensity
+    var memo: String
 
     init(
         id: UUID = UUID(),
         youtubeID: String,
+        localFileName: String? = nil,
         title: String,
         category: ExerciseCategory,
         folderPath: [String],
@@ -109,10 +112,12 @@ struct ExerciseVideo: Identifiable, Codable, Equatable, Hashable {
         equipment: [String],
         goals: [String],
         durationMinutes: Int = 10,
-        intensity: ExerciseIntensity = .normal
+        intensity: ExerciseIntensity = .normal,
+        memo: String = ""
     ) {
         self.id = id
         self.youtubeID = youtubeID
+        self.localFileName = localFileName
         self.title = title
         self.category = category
         self.folderPath = folderPath
@@ -121,10 +126,31 @@ struct ExerciseVideo: Identifiable, Codable, Equatable, Hashable {
         self.goals = goals
         self.durationMinutes = durationMinutes
         self.intensity = intensity
+        self.memo = memo
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(UUID.self, forKey: .id)
+        youtubeID = try container.decode(String.self, forKey: .youtubeID)
+        localFileName = try container.decodeIfPresent(String.self, forKey: .localFileName)
+        title = try container.decode(String.self, forKey: .title)
+        category = try container.decode(ExerciseCategory.self, forKey: .category)
+        folderPath = try container.decode([String].self, forKey: .folderPath)
+        bodyParts = try container.decode([String].self, forKey: .bodyParts)
+        equipment = try container.decode([String].self, forKey: .equipment)
+        goals = try container.decode([String].self, forKey: .goals)
+        durationMinutes = try container.decode(Int.self, forKey: .durationMinutes)
+        intensity = try container.decode(ExerciseIntensity.self, forKey: .intensity)
+        memo = try container.decodeIfPresent(String.self, forKey: .memo) ?? ""
     }
 
     var watchURLString: String {
         "https://www.youtube.com/watch?v=\(youtubeID)"
+    }
+
+    var isLocalVideo: Bool {
+        localFileName != nil
     }
 
     var folderLabel: String {
@@ -136,6 +162,23 @@ struct ExerciseVideo: Identifiable, Codable, Equatable, Hashable {
         return ExerciseVideo(
             youtubeID: video.id,
             title: video.title,
+            category: result.category,
+            folderPath: result.folderPath,
+            bodyParts: result.bodyParts,
+            equipment: result.equipment,
+            goals: result.goals,
+            durationMinutes: result.durationMinutes,
+            intensity: result.intensity
+        )
+    }
+
+    static func makeFromLocalFile(fileName: String, originalTitle: String, defaultCategory: ExerciseCategory) -> ExerciseVideo {
+        let title = originalTitle.trimmed.isEmpty ? "MP4 영상" : originalTitle.trimmed
+        let result = ExerciseVideoClassifier.classify(title: title, defaultCategory: defaultCategory)
+        return ExerciseVideo(
+            youtubeID: "local:\(UUID().uuidString)",
+            localFileName: fileName,
+            title: title,
             category: result.category,
             folderPath: result.folderPath,
             bodyParts: result.bodyParts,
