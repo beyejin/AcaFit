@@ -1,4 +1,4 @@
-# 작업 백로그 (아카핏)
+# 작업 백로그 (Archiving Fitness)
 
 ## ✅ 완료
 - 아카이브 탭: 영상 탭 시 단일 영상만 표시 + 카테고리/운동 도구/메모 인라인 편집 (`ArchiveVideoDetailScreen`)
@@ -6,7 +6,7 @@
 - 영어 "Video N" 라벨 → "N번째 영상"
 - `ActionButton.swift` 복구 (마지막 커밋 버전으로)
 - 앱 아이콘 교체 (리퀴드 글래스 덤벨 + 재생)
-- Display Name `AcaFit` → `아카핏`
+- Display Name `AcaFit` → `Archiving Fitness`
 - YouTube 플레이어 안정성: youtube.com embed URL 직접 로드 + navigation delegate 정리 + `enablejsapi=1`
 
 ## ✅ 완료 — 영상 묶음

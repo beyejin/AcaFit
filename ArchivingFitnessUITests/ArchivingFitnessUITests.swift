@@ -1,13 +1,13 @@
 //
-//  RoutineBriefingUITests.swift
-//  RoutineBriefingUITests
+//  ArchivingFitnessUITests.swift
+//  ArchivingFitnessUITests
 //
 //  Created by 한예진 on 6/15/26.
 //
 
 import XCTest
 
-final class RoutineBriefingUITests: XCTestCase {
+final class ArchivingFitnessUITests: XCTestCase {
 
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.

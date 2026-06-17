@@ -13,6 +13,8 @@ struct ContentView: View {
     @AppStorage("youtubeAPIKey") private var youtubeAPIKey = ""
     @AppStorage("customRoutinesJSON") private var customRoutinesJSON = ""
     @AppStorage("routineSelectionRaw") private var routineSelectionRaw = "auto"
+    @AppStorage("archiveFolderNamesJSON") private var archiveFolderNamesJSON = ""
+    @AppStorage("archiveFolderDisplayMode") private var archiveFolderDisplayModeRaw = ArchiveFolderDisplayMode.icons.rawValue
 
     @State private var playlistVideos: [YouTubeVideo] = []
     @State private var fetchedDetails: [String: YouTubeVideoDetails] = [:]
@@ -30,6 +32,8 @@ struct ContentView: View {
     @State private var editingVideo: ExerciseVideo?
     @State private var archiveViewMode = ArchiveViewMode.videos
     @State private var selectedArchiveFolder: String?
+    @State private var folderNameDraft = ""
+    @State private var folderAlertMode: FolderAlertMode?
 
     private var exerciseVideos: [ExerciseVideo] {
         get { ExerciseVideo.decode(from: exerciseVideosJSON) }
@@ -48,8 +52,11 @@ struct ContentView: View {
             .map { video in
                 var candidate = ExerciseVideo.makeFromYouTube(video, defaultCategory: defaultImportCategory)
                 if let details = fetchedDetails[video.id] {
+                    candidate = ExerciseVideo.makeFromYouTube(
+                        YouTubeVideo(id: video.id, title: details.title),
+                        defaultCategory: defaultImportCategory
+                    )
                     candidate.durationMinutes = details.durationMinutes
-                    candidate.title = details.title
                 }
                 return candidate
             }
@@ -69,7 +76,12 @@ struct ContentView: View {
         let grouped = Dictionary(grouping: filteredVideos) { video in
             video.folderPath.first ?? "미분류"
         }
-        return grouped
+        let customGroups = archiveFolderNames.reduce(into: grouped) { result, folderName in
+            if result[folderName] == nil {
+                result[folderName] = []
+            }
+        }
+        return customGroups
             .map { (name: $0.key, videos: $0.value.sorted { $0.title < $1.title }) }
             .sorted { lhs, rhs in
                 if lhs.name == "미분류" { return false }
@@ -81,6 +93,16 @@ struct ContentView: View {
     private var selectedArchiveFolderVideos: [ExerciseVideo] {
         guard let selectedArchiveFolder else { return [] }
         return archiveFolderGroups.first { $0.name == selectedArchiveFolder }?.videos ?? []
+    }
+
+    private var archiveFolderNames: [String] {
+        get { StringArrayStore.decode(from: archiveFolderNamesJSON) }
+        nonmutating set { archiveFolderNamesJSON = StringArrayStore.encode(newValue.uniquePreservingOrder()) }
+    }
+
+    private var archiveFolderDisplayMode: ArchiveFolderDisplayMode {
+        get { ArchiveFolderDisplayMode(rawValue: archiveFolderDisplayModeRaw) ?? .icons }
+        nonmutating set { archiveFolderDisplayModeRaw = newValue.rawValue }
     }
 
     private var appThemeMode: AppThemeMode {
@@ -247,21 +269,30 @@ struct ContentView: View {
                     }
                     .pickerStyle(.segmented)
 
-                    if filteredVideos.isEmpty {
-                        emptyState(
-                            title: exerciseVideos.isEmpty ? "아카이브가 비어 있어요" : "필터에 맞는 영상이 없어요",
-                            subtitle: exerciseVideos.isEmpty ? "YouTube 재생목록에서 영상을 가져와 보관해요." : "필터를 하나씩 해제해 보세요."
-                        )
-                    } else if archiveViewMode == .videos {
-                        LazyVGrid(columns: [GridItem(.adaptive(minimum: 250), spacing: 12)], spacing: 12) {
-                            ForEach(filteredVideos) { video in
-                                exerciseVideoCard(video)
+                    if archiveViewMode == .folders {
+                        if archiveFolderGroups.isEmpty {
+                            emptyState(
+                                title: exerciseVideos.isEmpty ? "아카이브가 비어 있어요" : "필터에 맞는 폴더가 없어요",
+                                subtitle: exerciseVideos.isEmpty ? "YouTube 또는 MP4 영상을 저장하거나 폴더를 추가해요." : "필터를 하나씩 해제해 보세요."
+                            )
+                        } else if let selectedArchiveFolder {
+                            archiveFolderDetail(name: selectedArchiveFolder, videos: selectedArchiveFolderVideos)
+                        } else {
+                            archiveFolderBrowser
+                        }
+                    } else {
+                        if filteredVideos.isEmpty {
+                            emptyState(
+                                title: exerciseVideos.isEmpty ? "아카이브가 비어 있어요" : "필터에 맞는 영상이 없어요",
+                                subtitle: exerciseVideos.isEmpty ? "YouTube 또는 MP4 영상을 저장해요." : "필터를 하나씩 해제해 보세요."
+                            )
+                        } else {
+                            LazyVGrid(columns: [GridItem(.adaptive(minimum: 250), spacing: 12)], spacing: 12) {
+                                ForEach(filteredVideos) { video in
+                                    exerciseVideoCard(video)
+                                }
                             }
                         }
-                    } else if let selectedArchiveFolder {
-                        archiveFolderDetail(name: selectedArchiveFolder, videos: selectedArchiveFolderVideos)
-                    } else {
-                        archiveFolderGrid
                     }
                 }
                 .screenPadding()
@@ -269,8 +300,28 @@ struct ContentView: View {
             .exerciseBackground()
             .navigationTitle("아카이브")
             .toolbar {
-                Button("필터 초기화") {
-                    clearFilters()
+                ToolbarItem(placement: .topBarLeading) {
+                    if archiveViewMode == .folders {
+                        Button {
+                            folderNameDraft = ""
+                            folderAlertMode = .add
+                        } label: {
+                            Label("폴더 추가", systemImage: "folder.badge.plus")
+                        }
+                    }
+                }
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("필터 초기화") {
+                        clearFilters()
+                    }
+                }
+            }
+            .sheet(item: $folderAlertMode) { mode in
+                FolderEditorSheet(
+                    title: mode.title,
+                    folderName: folderNameDraft
+                ) { newName in
+                    saveFolder(mode, newName: newName)
                 }
             }
             .navigationDestination(item: $archiveSelectedVideo) { video in
@@ -640,34 +691,161 @@ struct ContentView: View {
         .exerciseCard()
     }
 
-    private var archiveFolderGrid: some View {
+    private var archiveFolderBrowser: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Text("폴더 보기")
+                    .font(.subheadline.weight(.bold))
+                    .foregroundStyle(.secondary)
+
+                Spacer()
+
+                Menu {
+                    Picker("보기 방식", selection: Binding(
+                        get: { archiveFolderDisplayMode },
+                        set: { archiveFolderDisplayMode = $0 }
+                    )) {
+                        ForEach(ArchiveFolderDisplayMode.allCases) { mode in
+                            Label(mode.title, systemImage: mode.systemImage).tag(mode)
+                        }
+                    }
+                } label: {
+                    Label(archiveFolderDisplayMode.title, systemImage: archiveFolderDisplayMode.systemImage)
+                        .font(.subheadline.weight(.semibold))
+                }
+                .buttonStyle(.bordered)
+                .buttonBorderShape(.roundedRectangle(radius: 8))
+            }
+
+            switch archiveFolderDisplayMode {
+            case .icons:
+                archiveFolderIconGrid
+            case .list:
+                archiveFolderList
+            case .hierarchy:
+                archiveFolderHierarchy
+            case .gallery:
+                archiveFolderGallery
+            }
+        }
+    }
+
+    private var archiveFolderIconGrid: some View {
         LazyVGrid(columns: [GridItem(.adaptive(minimum: 220), spacing: 12)], spacing: 12) {
+            ForEach(archiveFolderGroups, id: \.name) { group in
+                archiveFolderIconCard(group)
+            }
+        }
+    }
+
+    private var archiveFolderList: some View {
+        VStack(spacing: 0) {
+            ForEach(archiveFolderGroups, id: \.name) { group in
+                archiveFolderListRow(group)
+                if group.name != archiveFolderGroups.last?.name {
+                    Divider().padding(.leading, 52)
+                }
+            }
+        }
+        .background(.regularMaterial)
+        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+    }
+
+    private var archiveFolderHierarchy: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            ForEach(archiveFolderGroups, id: \.name) { group in
+                VStack(alignment: .leading, spacing: 8) {
+                    archiveFolderListRow(group)
+
+                    if group.videos.isEmpty {
+                        Text("비어 있음")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .padding(.leading, 52)
+                    } else {
+                        ForEach(group.videos.prefix(3)) { video in
+                            Button {
+                                archiveSelectedVideo = video
+                            } label: {
+                                HStack(spacing: 10) {
+                                    Image(systemName: video.category.iconName)
+                                        .foregroundStyle(video.category.tint)
+                                        .frame(width: 22)
+                                    Text(video.title)
+                                        .font(.subheadline)
+                                        .foregroundStyle(.primary)
+                                        .lineLimit(1)
+                                    Spacer()
+                                    Text("\(video.durationMinutes)분")
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                }
+                                .padding(.leading, 52)
+                                .padding(.trailing, 12)
+                            }
+                            .buttonStyle(.plain)
+                        }
+
+                        if group.videos.count > 3 {
+                            Text("외 \(group.videos.count - 3)개")
+                                .font(.caption.weight(.semibold))
+                                .foregroundStyle(.secondary)
+                                .padding(.leading, 52)
+                        }
+                    }
+                }
+                .padding(.vertical, 10)
+                .background(.regularMaterial)
+                .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+            }
+        }
+    }
+
+    private var archiveFolderGallery: some View {
+        LazyVGrid(columns: [GridItem(.adaptive(minimum: 300), spacing: 12)], spacing: 12) {
             ForEach(archiveFolderGroups, id: \.name) { group in
                 Button {
                     selectedArchiveFolder = group.name
                 } label: {
                     VStack(alignment: .leading, spacing: 12) {
-                        HStack {
+                        ZStack(alignment: .bottomLeading) {
+                            RoundedRectangle(cornerRadius: 8, style: .continuous)
+                                .fill(appAccentColor.color.opacity(0.14))
+                                .frame(height: 128)
+
                             Image(systemName: "folder.fill")
+                                .font(.system(size: 58, weight: .semibold))
                                 .foregroundStyle(appAccentColor.color)
-                                .font(.title3)
+                                .padding(18)
+
+                            if let preview = group.videos.first {
+                                Label(preview.category.title, systemImage: preview.category.iconName)
+                                    .font(.caption.weight(.bold))
+                                    .foregroundStyle(preview.category.tint)
+                                    .padding(8)
+                                    .background(.regularMaterial)
+                                    .clipShape(Capsule())
+                                    .padding(12)
+                            }
+                        }
+
+                        HStack(alignment: .firstTextBaseline) {
+                            Text(group.name)
+                                .font(.headline)
+                                .foregroundStyle(.primary)
+                                .lineLimit(1)
                             Spacer()
-                            Text("\(group.videos.count)개")
-                                .font(.caption.weight(.bold))
+                            Text(folderSummary(for: group))
+                                .font(.caption.weight(.semibold))
                                 .foregroundStyle(.secondary)
                         }
 
-                        Text(group.name)
-                            .font(.headline)
-                            .foregroundStyle(.primary)
-                            .lineLimit(2)
-
-                        Text("\(group.videos.reduce(0) { $0 + $1.durationMinutes })분")
+                        Text(group.videos.prefix(2).map(\.title).joined(separator: " · "))
                             .font(.caption)
                             .foregroundStyle(.secondary)
+                            .lineLimit(2)
                     }
-                    .padding(14)
-                    .frame(maxWidth: .infinity, minHeight: 124, alignment: .leading)
+                    .padding(12)
                     .background(.regularMaterial)
                     .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                     .overlay {
@@ -676,8 +854,104 @@ struct ContentView: View {
                     }
                 }
                 .buttonStyle(.plain)
+                .contextMenu {
+                    archiveFolderContextMenu(for: group.name)
+                }
             }
         }
+    }
+
+    private func archiveFolderIconCard(_ group: (name: String, videos: [ExerciseVideo])) -> some View {
+        Button {
+            selectedArchiveFolder = group.name
+        } label: {
+            VStack(alignment: .leading, spacing: 12) {
+                HStack {
+                    Image(systemName: "folder.fill")
+                        .foregroundStyle(appAccentColor.color)
+                        .font(.title3)
+                    Spacer()
+                    Text("\(group.videos.count)개")
+                        .font(.caption.weight(.bold))
+                        .foregroundStyle(.secondary)
+                }
+
+                Text(group.name)
+                    .font(.headline)
+                    .foregroundStyle(.primary)
+                    .lineLimit(2)
+
+                Text("\(group.videos.reduce(0) { $0 + $1.durationMinutes })분")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            .padding(14)
+            .frame(maxWidth: .infinity, minHeight: 124, alignment: .leading)
+            .background(.regularMaterial)
+            .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+            .overlay {
+                RoundedRectangle(cornerRadius: 8, style: .continuous)
+                    .stroke(Color.secondary.opacity(0.12), lineWidth: 1)
+            }
+        }
+        .buttonStyle(.plain)
+        .contextMenu {
+            archiveFolderContextMenu(for: group.name)
+        }
+    }
+
+    private func archiveFolderListRow(_ group: (name: String, videos: [ExerciseVideo])) -> some View {
+        Button {
+            selectedArchiveFolder = group.name
+        } label: {
+            HStack(spacing: 12) {
+                Image(systemName: "folder.fill")
+                    .font(.title3)
+                    .foregroundStyle(appAccentColor.color)
+                    .frame(width: 32)
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(group.name)
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(.primary)
+                    Text(folderSummary(for: group))
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+
+                Spacer()
+
+                Image(systemName: "chevron.right")
+                    .font(.caption.weight(.bold))
+                    .foregroundStyle(.tertiary)
+            }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 10)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .contextMenu {
+            archiveFolderContextMenu(for: group.name)
+        }
+    }
+
+    @ViewBuilder
+    private func archiveFolderContextMenu(for name: String) -> some View {
+        Button {
+            folderNameDraft = name
+            folderAlertMode = .rename(name)
+        } label: {
+            Label("폴더 이름 변경", systemImage: "pencil")
+        }
+        Button(role: .destructive) {
+            deleteFolder(name)
+        } label: {
+            Label("폴더 삭제", systemImage: "trash")
+        }
+    }
+
+    private func folderSummary(for group: (name: String, videos: [ExerciseVideo])) -> String {
+        "\(group.videos.count)개 · \(group.videos.reduce(0) { $0 + $1.durationMinutes })분"
     }
 
     private func archiveFolderDetail(name: String, videos: [ExerciseVideo]) -> some View {
@@ -698,9 +972,30 @@ struct ContentView: View {
                     .foregroundStyle(.secondary)
             }
 
-            Label(name, systemImage: "folder.fill")
-                .font(.title3.weight(.bold))
-                .foregroundStyle(appAccentColor.color)
+            HStack {
+                Label(name, systemImage: "folder.fill")
+                    .font(.title3.weight(.bold))
+                    .foregroundStyle(appAccentColor.color)
+
+                Spacer()
+
+                Menu {
+                    Button {
+                        folderNameDraft = name
+                        folderAlertMode = .rename(name)
+                    } label: {
+                        Label("이름 변경", systemImage: "pencil")
+                    }
+                    Button(role: .destructive) {
+                        deleteFolder(name)
+                    } label: {
+                        Label("삭제", systemImage: "trash")
+                    }
+                } label: {
+                    Image(systemName: "ellipsis.circle")
+                        .font(.title3)
+                }
+            }
 
             LazyVGrid(columns: [GridItem(.adaptive(minimum: 250), spacing: 12)], spacing: 12) {
                 ForEach(videos) { video in
@@ -1154,6 +1449,55 @@ struct ContentView: View {
         selectedArchiveFolder = nil
     }
 
+    private func saveFolder(_ mode: FolderAlertMode, newName: String) {
+        let trimmedName = newName.trimmed
+        guard !trimmedName.isEmpty else { return }
+
+        switch mode {
+        case .add:
+            archiveFolderNames = (archiveFolderNames + [trimmedName]).uniquePreservingOrder()
+            selectedArchiveFolder = trimmedName
+            archiveViewMode = .folders
+        case .rename(let oldName):
+            renameFolder(oldName, to: trimmedName)
+        }
+    }
+
+    private func renameFolder(_ oldName: String, to newName: String) {
+        guard !newName.isEmpty, oldName != newName else { return }
+
+        archiveFolderNames = archiveFolderNames.map { $0 == oldName ? newName : $0 }.uniquePreservingOrder()
+        exerciseVideos = exerciseVideos.map { video in
+            renameFolder(oldName, to: newName, in: video)
+        }
+        if selectedArchiveFolder == oldName {
+            selectedArchiveFolder = newName
+        }
+    }
+
+    private func deleteFolder(_ folderName: String) {
+        archiveFolderNames = archiveFolderNames.filter { $0 != folderName }
+        exerciseVideos = exerciseVideos.map { video in
+            renameFolder(folderName, to: "미분류", in: video)
+        }
+        if selectedArchiveFolder == folderName {
+            selectedArchiveFolder = nil
+        }
+    }
+
+    private func renameFolder(_ oldName: String, to newName: String, in video: ExerciseVideo) -> ExerciseVideo {
+        guard video.folderPath.first == oldName else { return video }
+        var updatedVideo = video
+        var path = updatedVideo.folderPath
+        if path.isEmpty {
+            path = [newName]
+        } else {
+            path[0] = newName
+        }
+        updatedVideo.folderPath = path.uniquePreservingOrder()
+        return updatedVideo
+    }
+
     private func recommendationPlan(from videos: [ExerciseVideo], targetMinutes: Int) -> [ExerciseVideo] {
         guard !videos.isEmpty else { return [] }
         let rotation = dailySeed % videos.count
@@ -1248,10 +1592,106 @@ private enum ArchiveViewMode: String, CaseIterable, Identifiable {
     }
 }
 
+enum ArchiveFolderDisplayMode: String, CaseIterable, Identifiable {
+    case icons
+    case list
+    case hierarchy
+    case gallery
+
+    var id: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .icons: "아이콘"
+        case .list: "목록"
+        case .hierarchy: "계층"
+        case .gallery: "갤러리"
+        }
+    }
+
+    var systemImage: String {
+        switch self {
+        case .icons: "square.grid.2x2"
+        case .list: "list.bullet"
+        case .hierarchy: "list.bullet.indent"
+        case .gallery: "rectangle.grid.1x2"
+        }
+    }
+}
+
+private enum FolderAlertMode: Identifiable {
+    case add
+    case rename(String)
+
+    var id: String {
+        switch self {
+        case .add: "add"
+        case .rename(let folderName): "rename:\(folderName)"
+        }
+    }
+
+    var title: String {
+        switch self {
+        case .add: "폴더 추가"
+        case .rename: "폴더 이름 변경"
+        }
+    }
+}
+
+private enum StringArrayStore {
+    static func decode(from json: String) -> [String] {
+        guard let data = json.data(using: .utf8), !data.isEmpty else { return [] }
+        return (try? JSONDecoder().decode([String].self, from: data)) ?? []
+    }
+
+    static func encode(_ values: [String]) -> String {
+        guard let data = try? JSONEncoder().encode(values) else { return "" }
+        return String(data: data, encoding: .utf8) ?? ""
+    }
+}
+
 private enum ExerciseTaxonomy {
     static let bodyParts = ["전신", "상체", "하체", "코어", "복근", "목", "어깨", "팔", "손목", "가슴", "등", "허리", "골반", "고관절", "허벅지", "종아리"]
-    static let equipment = ["맨몸", "요가 매트", "폼롤러", "요가 블럭", "밴드", "덤벨", "머신", "헬스장", "소도구", "짐볼", "리포머", "캐딜락", "체어", "바렐", "수영장", "킥판", "풀부이", "패들"]
+    static let equipment = ["맨몸", "요가 매트", "폼롤러", "요가 블럭", "밴드", "덤벨", "머신", "헬스장", "소도구", "짐볼", "리포머", "매트", "캐딜락", "체어", "바렐", "수영장", "킥판", "풀부이", "패들"]
     static let goals = ["근력", "유연성", "회복", "자세 교정", "기술 연습", "유산소", "워밍업", "쿨다운", "다이어트", "코어 강화", "균형", "루틴"]
+}
+
+private struct FolderEditorSheet: View {
+    @Environment(\.dismiss) private var dismiss
+
+    let title: String
+    let save: (String) -> Void
+
+    @State private var folderName: String
+
+    init(title: String, folderName: String, save: @escaping (String) -> Void) {
+        self.title = title
+        self.save = save
+        _folderName = State(initialValue: folderName)
+    }
+
+    var body: some View {
+        NavigationStack {
+            Form {
+                Section("폴더") {
+                    TextField("폴더 이름", text: $folderName)
+                }
+            }
+            .navigationTitle(title)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("취소") { dismiss() }
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("저장") {
+                        save(folderName)
+                        dismiss()
+                    }
+                    .disabled(folderName.trimmed.isEmpty)
+                }
+            }
+        }
+    }
 }
 
 private struct CustomRoutineEditorView: View {
@@ -1689,6 +2129,7 @@ private struct ArchiveVideoDetailScreen: View {
 
     @State private var title: String
     @State private var category: ExerciseCategory
+    @State private var folderText: String
     @State private var equipmentText: String
     @State private var memo: String
 
@@ -1698,6 +2139,7 @@ private struct ArchiveVideoDetailScreen: View {
         self.delete = delete
         _title = State(initialValue: video.title)
         _category = State(initialValue: video.category)
+        _folderText = State(initialValue: video.folderPath.joined(separator: ", "))
         _equipmentText = State(initialValue: video.equipment.joined(separator: ", "))
         _memo = State(initialValue: video.memo)
     }
@@ -1710,6 +2152,8 @@ private struct ArchiveVideoDetailScreen: View {
                 titleSection
 
                 categoryCard
+
+                folderCard
 
                 equipmentCard
 
@@ -1813,6 +2257,25 @@ private struct ArchiveVideoDetailScreen: View {
         .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
     }
 
+    private var folderCard: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("폴더")
+                .font(.headline)
+
+            TextField("아침 스트레칭, 목/어깨", text: $folderText, axis: .vertical)
+                .lineLimit(1...4)
+                .textFieldStyle(.roundedBorder)
+
+            Text("첫 번째 폴더가 아카이브 폴더 보기의 기준이 돼요.")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+        }
+        .padding(18)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color(.secondarySystemGroupedBackground))
+        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+    }
+
     private var equipmentCard: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("운동 도구")
@@ -1862,6 +2325,15 @@ private struct ArchiveVideoDetailScreen: View {
         return values.isEmpty ? ["맨몸"] : values
     }
 
+    private var parsedFolders: [String] {
+        let values = folderText
+            .components(separatedBy: CharacterSet(charactersIn: ",\n·"))
+            .map(\.trimmed)
+            .filter { !$0.isEmpty }
+            .uniquePreservingOrder()
+        return values.isEmpty ? ["미분류"] : values
+    }
+
     private var updatedVideo: ExerciseVideo {
         ExerciseVideo(
             id: video.id,
@@ -1869,7 +2341,7 @@ private struct ArchiveVideoDetailScreen: View {
             localFileName: video.localFileName,
             title: title.trimmed,
             category: category,
-            folderPath: video.folderPath,
+            folderPath: parsedFolders,
             bodyParts: video.bodyParts,
             equipment: parsedEquipment,
             goals: video.goals,
@@ -1882,6 +2354,7 @@ private struct ArchiveVideoDetailScreen: View {
     private var hasChanges: Bool {
         title.trimmed != video.title
             || category != video.category
+            || parsedFolders != video.folderPath
             || parsedEquipment != video.equipment
             || memo != video.memo
     }

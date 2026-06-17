@@ -249,6 +249,7 @@ enum ExerciseVideoClassifier {
             ("소도구", ["소도구", "prop"]),
             ("짐볼", ["짐볼", "ball"]),
             ("리포머", ["리포머", "reformer"]),
+            ("매트", ["매트", "mat"]),
             ("캐딜락", ["캐딜락", "cadillac"]),
             ("체어", ["체어", "chair"]),
             ("바렐", ["바렐", "barrel"]),
@@ -337,6 +338,9 @@ enum ExerciseVideoClassifier {
         if text.contains("필라테스") || text.contains("pilates") {
             return .pilates
         }
+        if text.contains("리포머") || text.contains("reformer") {
+            return .pilates
+        }
         if text.contains("요가") || text.contains("yoga") {
             return .yoga
         }
@@ -355,6 +359,7 @@ enum ExerciseVideoClassifier {
     private static func detectedDuration(in text: String) -> Int {
         let patterns = [
             #"(\d{1,3})\s*분"#,
+            #"(\d{1,3})\s*mins"#,
             #"(\d{1,3})\s*(min|minute|minutes)"#
         ]
 

@@ -1,13 +1,13 @@
 //
-//  RoutineBriefingUITestsLaunchTests.swift
-//  RoutineBriefingUITests
+//  ArchivingFitnessUITestsLaunchTests.swift
+//  ArchivingFitnessUITests
 //
 //  Created by 한예진 on 6/15/26.
 //
 
 import XCTest
 
-final class RoutineBriefingUITestsLaunchTests: XCTestCase {
+final class ArchivingFitnessUITestsLaunchTests: XCTestCase {
 
     override class var runsForEachTargetApplicationUIConfiguration: Bool {
         true

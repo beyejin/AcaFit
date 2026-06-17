@@ -12,50 +12,50 @@
 			containerPortal = 3AD642C92FDFA0D200004323 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 3AD642D02FDFA0D200004323;
-			remoteInfo = RoutineBriefing;
+			remoteInfo = ArchivingFitness;
 		};
 		3AD642ED2FDFA0D500004323 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 3AD642C92FDFA0D200004323 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 3AD642D02FDFA0D200004323;
-			remoteInfo = RoutineBriefing;
+			remoteInfo = ArchivingFitness;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		3AD642D12FDFA0D200004323 /* RoutineBriefing.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RoutineBriefing.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		3AD642E22FDFA0D500004323 /* RoutineBriefingTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RoutineBriefingTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		3AD642EC2FDFA0D500004323 /* RoutineBriefingUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RoutineBriefingUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		3AD642D12FDFA0D200004323 /* ArchivingFitness.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ArchivingFitness.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		3AD642E22FDFA0D500004323 /* ArchivingFitnessTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ArchivingFitnessTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		3AD642EC2FDFA0D500004323 /* ArchivingFitnessUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ArchivingFitnessUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		3AD642F42FDFA0D500004323 /* Exceptions for "RoutineBriefing" folder in "RoutineBriefing" target */ = {
+		3AD642F42FDFA0D500004323 /* Exceptions for "ArchivingFitness" folder in "ArchivingFitness" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
 			);
-			target = 3AD642D02FDFA0D200004323 /* RoutineBriefing */;
+			target = 3AD642D02FDFA0D200004323 /* ArchivingFitness */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		3AD642D32FDFA0D200004323 /* RoutineBriefing */ = {
+		3AD642D32FDFA0D200004323 /* ArchivingFitness */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				3AD642F42FDFA0D500004323 /* Exceptions for "RoutineBriefing" folder in "RoutineBriefing" target */,
+				3AD642F42FDFA0D500004323 /* Exceptions for "ArchivingFitness" folder in "ArchivingFitness" target */,
 			);
-			path = RoutineBriefing;
+			path = ArchivingFitness;
 			sourceTree = "<group>";
 		};
-		3AD642E52FDFA0D500004323 /* RoutineBriefingTests */ = {
+		3AD642E52FDFA0D500004323 /* ArchivingFitnessTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = RoutineBriefingTests;
+			path = ArchivingFitnessTests;
 			sourceTree = "<group>";
 		};
-		3AD642EF2FDFA0D500004323 /* RoutineBriefingUITests */ = {
+		3AD642EF2FDFA0D500004323 /* ArchivingFitnessUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = RoutineBriefingUITests;
+			path = ArchivingFitnessUITests;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -88,9 +88,9 @@
 		3AD642C82FDFA0D100004323 = {
 			isa = PBXGroup;
 			children = (
-				3AD642D32FDFA0D200004323 /* RoutineBriefing */,
-				3AD642E52FDFA0D500004323 /* RoutineBriefingTests */,
-				3AD642EF2FDFA0D500004323 /* RoutineBriefingUITests */,
+				3AD642D32FDFA0D200004323 /* ArchivingFitness */,
+				3AD642E52FDFA0D500004323 /* ArchivingFitnessTests */,
+				3AD642EF2FDFA0D500004323 /* ArchivingFitnessUITests */,
 				3AD642D22FDFA0D200004323 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -98,9 +98,9 @@
 		3AD642D22FDFA0D200004323 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				3AD642D12FDFA0D200004323 /* RoutineBriefing.app */,
-				3AD642E22FDFA0D500004323 /* RoutineBriefingTests.xctest */,
-				3AD642EC2FDFA0D500004323 /* RoutineBriefingUITests.xctest */,
+				3AD642D12FDFA0D200004323 /* ArchivingFitness.app */,
+				3AD642E22FDFA0D500004323 /* ArchivingFitnessTests.xctest */,
+				3AD642EC2FDFA0D500004323 /* ArchivingFitnessUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -108,9 +108,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		3AD642D02FDFA0D200004323 /* RoutineBriefing */ = {
+		3AD642D02FDFA0D200004323 /* ArchivingFitness */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 3AD642F52FDFA0D500004323 /* Build configuration list for PBXNativeTarget "RoutineBriefing" */;
+			buildConfigurationList = 3AD642F52FDFA0D500004323 /* Build configuration list for PBXNativeTarget "ArchivingFitness" */;
 			buildPhases = (
 				3AD642CD2FDFA0D200004323 /* Sources */,
 				3AD642CE2FDFA0D200004323 /* Frameworks */,
@@ -121,18 +121,18 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				3AD642D32FDFA0D200004323 /* RoutineBriefing */,
+				3AD642D32FDFA0D200004323 /* ArchivingFitness */,
 			);
-			name = RoutineBriefing;
+			name = ArchivingFitness;
 			packageProductDependencies = (
 			);
-			productName = RoutineBriefing;
-			productReference = 3AD642D12FDFA0D200004323 /* RoutineBriefing.app */;
+			productName = ArchivingFitness;
+			productReference = 3AD642D12FDFA0D200004323 /* ArchivingFitness.app */;
 			productType = "com.apple.product-type.application";
 		};
-		3AD642E12FDFA0D500004323 /* RoutineBriefingTests */ = {
+		3AD642E12FDFA0D500004323 /* ArchivingFitnessTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 3AD642FA2FDFA0D500004323 /* Build configuration list for PBXNativeTarget "RoutineBriefingTests" */;
+			buildConfigurationList = 3AD642FA2FDFA0D500004323 /* Build configuration list for PBXNativeTarget "ArchivingFitnessTests" */;
 			buildPhases = (
 				3AD642DE2FDFA0D500004323 /* Sources */,
 				3AD642DF2FDFA0D500004323 /* Frameworks */,
@@ -144,18 +144,18 @@
 				3AD642E42FDFA0D500004323 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				3AD642E52FDFA0D500004323 /* RoutineBriefingTests */,
+				3AD642E52FDFA0D500004323 /* ArchivingFitnessTests */,
 			);
-			name = RoutineBriefingTests;
+			name = ArchivingFitnessTests;
 			packageProductDependencies = (
 			);
-			productName = RoutineBriefingTests;
-			productReference = 3AD642E22FDFA0D500004323 /* RoutineBriefingTests.xctest */;
+			productName = ArchivingFitnessTests;
+			productReference = 3AD642E22FDFA0D500004323 /* ArchivingFitnessTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		3AD642EB2FDFA0D500004323 /* RoutineBriefingUITests */ = {
+		3AD642EB2FDFA0D500004323 /* ArchivingFitnessUITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 3AD642FD2FDFA0D500004323 /* Build configuration list for PBXNativeTarget "RoutineBriefingUITests" */;
+			buildConfigurationList = 3AD642FD2FDFA0D500004323 /* Build configuration list for PBXNativeTarget "ArchivingFitnessUITests" */;
 			buildPhases = (
 				3AD642E82FDFA0D500004323 /* Sources */,
 				3AD642E92FDFA0D500004323 /* Frameworks */,
@@ -167,13 +167,13 @@
 				3AD642EE2FDFA0D500004323 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				3AD642EF2FDFA0D500004323 /* RoutineBriefingUITests */,
+				3AD642EF2FDFA0D500004323 /* ArchivingFitnessUITests */,
 			);
-			name = RoutineBriefingUITests;
+			name = ArchivingFitnessUITests;
 			packageProductDependencies = (
 			);
-			productName = RoutineBriefingUITests;
-			productReference = 3AD642EC2FDFA0D500004323 /* RoutineBriefingUITests.xctest */;
+			productName = ArchivingFitnessUITests;
+			productReference = 3AD642EC2FDFA0D500004323 /* ArchivingFitnessUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
@@ -199,7 +199,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 3AD642CC2FDFA0D200004323 /* Build configuration list for PBXProject "RoutineBriefing" */;
+			buildConfigurationList = 3AD642CC2FDFA0D200004323 /* Build configuration list for PBXProject "ArchivingFitness" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -213,9 +213,9 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				3AD642D02FDFA0D200004323 /* RoutineBriefing */,
-				3AD642E12FDFA0D500004323 /* RoutineBriefingTests */,
-				3AD642EB2FDFA0D500004323 /* RoutineBriefingUITests */,
+				3AD642D02FDFA0D200004323 /* ArchivingFitness */,
+				3AD642E12FDFA0D500004323 /* ArchivingFitnessTests */,
+				3AD642EB2FDFA0D500004323 /* ArchivingFitnessUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -271,12 +271,12 @@
 /* Begin PBXTargetDependency section */
 		3AD642E42FDFA0D500004323 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 3AD642D02FDFA0D200004323 /* RoutineBriefing */;
+			target = 3AD642D02FDFA0D200004323 /* ArchivingFitness */;
 			targetProxy = 3AD642E32FDFA0D500004323 /* PBXContainerItemProxy */;
 		};
 		3AD642EE2FDFA0D500004323 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 3AD642D02FDFA0D200004323 /* RoutineBriefing */;
+			target = 3AD642D02FDFA0D200004323 /* ArchivingFitness */;
 			targetProxy = 3AD642ED2FDFA0D500004323 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -295,7 +295,7 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = RoutineBriefing/Info.plist;
+				INFOPLIST_FILE = ArchivingFitness/Info.plist;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -311,7 +311,7 @@
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 26.5;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.yejin.RoutineBriefing;
+				PRODUCT_BUNDLE_IDENTIFIER = com.yejin.ArchivingFitness;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = auto;
@@ -340,7 +340,7 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = RoutineBriefing/Info.plist;
+				INFOPLIST_FILE = ArchivingFitness/Info.plist;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -356,7 +356,7 @@
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 26.5;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.yejin.RoutineBriefing;
+				PRODUCT_BUNDLE_IDENTIFIER = com.yejin.ArchivingFitness;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = auto;
@@ -499,7 +499,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 26.5;
 				MACOSX_DEPLOYMENT_TARGET = 26.5;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.yejin.RoutineBriefingTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.yejin.ArchivingFitnessTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
@@ -509,7 +509,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,7";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/RoutineBriefing.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/RoutineBriefing";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ArchivingFitness.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/ArchivingFitness";
 				XROS_DEPLOYMENT_TARGET = 26.5;
 			};
 			name = Debug;
@@ -525,7 +525,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 26.5;
 				MACOSX_DEPLOYMENT_TARGET = 26.5;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.yejin.RoutineBriefingTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.yejin.ArchivingFitnessTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
@@ -535,7 +535,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,7";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/RoutineBriefing.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/RoutineBriefing";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ArchivingFitness.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/ArchivingFitness";
 				XROS_DEPLOYMENT_TARGET = 26.5;
 			};
 			name = Release;
@@ -550,7 +550,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 26.5;
 				MACOSX_DEPLOYMENT_TARGET = 26.5;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.yejin.RoutineBriefingUITests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.yejin.ArchivingFitnessUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
@@ -560,7 +560,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,7";
-				TEST_TARGET_NAME = RoutineBriefing;
+				TEST_TARGET_NAME = ArchivingFitness;
 				XROS_DEPLOYMENT_TARGET = 26.5;
 			};
 			name = Debug;
@@ -575,7 +575,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 26.5;
 				MACOSX_DEPLOYMENT_TARGET = 26.5;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.yejin.RoutineBriefingUITests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.yejin.ArchivingFitnessUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
@@ -585,7 +585,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,7";
-				TEST_TARGET_NAME = RoutineBriefing;
+				TEST_TARGET_NAME = ArchivingFitness;
 				XROS_DEPLOYMENT_TARGET = 26.5;
 			};
 			name = Release;
@@ -593,7 +593,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		3AD642CC2FDFA0D200004323 /* Build configuration list for PBXProject "RoutineBriefing" */ = {
+		3AD642CC2FDFA0D200004323 /* Build configuration list for PBXProject "ArchivingFitness" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				3AD642F82FDFA0D500004323 /* Debug */,
@@ -602,7 +602,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		3AD642F52FDFA0D500004323 /* Build configuration list for PBXNativeTarget "RoutineBriefing" */ = {
+		3AD642F52FDFA0D500004323 /* Build configuration list for PBXNativeTarget "ArchivingFitness" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				3AD642F62FDFA0D500004323 /* Debug */,
@@ -611,7 +611,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		3AD642FA2FDFA0D500004323 /* Build configuration list for PBXNativeTarget "RoutineBriefingTests" */ = {
+		3AD642FA2FDFA0D500004323 /* Build configuration list for PBXNativeTarget "ArchivingFitnessTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				3AD642FB2FDFA0D500004323 /* Debug */,
@@ -620,7 +620,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		3AD642FD2FDFA0D500004323 /* Build configuration list for PBXNativeTarget "RoutineBriefingUITests" */ = {
+		3AD642FD2FDFA0D500004323 /* Build configuration list for PBXNativeTarget "ArchivingFitnessUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				3AD642FE2FDFA0D500004323 /* Debug */,

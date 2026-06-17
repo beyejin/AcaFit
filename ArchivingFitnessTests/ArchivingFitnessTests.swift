@@ -1,15 +1,15 @@
 //
-//  RoutineBriefingTests.swift
-//  RoutineBriefingTests
+//  ArchivingFitnessTests.swift
+//  ArchivingFitnessTests
 //
 //  Created by 한예진 on 6/15/26.
 //
 
 import Foundation
 import Testing
-@testable import RoutineBriefing
+@testable import ArchivingFitness
 
-struct RoutineBriefingTests {
+struct ArchivingFitnessTests {
 
     @Test func extractsPlaylistIDFromYouTubePlaylistURL() throws {
         let url = "https://www.youtube.com/watch?v=6_LYz_XxD-g&list=PLG_C87ZIUfVSnkl19ZW471UAOnn74yL0l"
@@ -105,6 +105,28 @@ struct RoutineBriefingTests {
         #expect(html.contains("referrerpolicy=\"strict-origin-when-cross-origin\""))
         #expect(html.contains("origin=https://www.youtube-nocookie.com"))
         #expect(html.contains("https://www.youtube-nocookie.com/embed/abc123"))
+    }
+
+    @Test func autoFillsPilatesReformerMetadataFromImportedTitle() throws {
+        let video = ExerciseVideo.makeFromYouTube(
+            YouTubeVideo(id: "reformer", title: "20분 리포머 필라테스 코어 루틴"),
+            defaultCategory: .stretching
+        )
+
+        #expect(video.category == .pilates)
+        #expect(video.folderPath.contains("리포머"))
+        #expect(video.bodyParts.contains("코어"))
+        #expect(video.equipment.contains("리포머"))
+        #expect(video.durationMinutes == 20)
+    }
+
+    @Test func archiveFolderDisplayModesExposeFileAppStyleOptions() throws {
+        #expect(ArchiveFolderDisplayMode.allCases.map(\.title) == ["아이콘", "목록", "계층", "갤러리"])
+        #expect(ArchiveFolderDisplayMode(rawValue: "unknown") == nil)
+        #expect(ArchiveFolderDisplayMode.icons.systemImage == "square.grid.2x2")
+        #expect(ArchiveFolderDisplayMode.list.systemImage == "list.bullet")
+        #expect(ArchiveFolderDisplayMode.hierarchy.systemImage == "list.bullet.indent")
+        #expect(ArchiveFolderDisplayMode.gallery.systemImage == "rectangle.grid.1x2")
     }
 
 }
